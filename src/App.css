@@ -187,3 +187,7 @@ li.selected:not(correct) {
 .back-to-settings-button {
   background-color: #fdab3d;
 }
+
+.error-message {
+  color: #ff6961;
+}

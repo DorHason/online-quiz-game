@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   getNormalizedAnswersFromQuestion,
@@ -65,18 +65,18 @@ function Question() {
     }
   }, [question]);
 
-  const moveToNextQuestion = () => {
+  const moveToNextQuestion = useCallback(() => {
     setCurrentQuestionIndexAction(dispatch, currentQuestionIndex + 1);
     clearInterval(timerIndex);
-  };
+  }, [currentQuestionIndex, dispatch, timerIndex]);
 
-  const clearEarnedScoreAsync = () => {
+  const clearEarnedScoreAsync = useCallback(() => {
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
     const currentTimeoutId = setTimeout(() => setEarnedScore(null), 3000);
     setTimeoutId(currentTimeoutId);
-  };
+  }, [timeoutId]);
 
   useEffect(() => {
     if (timer === 0 && currentQuestionIndex + 1 <= questions.length) {
