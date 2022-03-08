@@ -1,41 +1,84 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import RETRIEVE_QUESTIONS_BASE_URL from "./consts";
-import { changeIsLoadingAction } from "./actions/global-actions.js";
-import { setQuestionsAction } from "./actions/start-button-actions.js";
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RETRIEVE_QUESTIONS_BASE_URL } from "../consts";
+import {
+  changeIsLoadingAction,
+  setCurrentQuestionIndexAction,
+  setScoreAction,
+  setQuestionsAction,
+} from "../actions/global-actions.js";
 
-function startButton(props) {
+function StartButton(props) {
   const { buttonText } = props;
+  const [errorMessage, setErrorMessage] = useState(null);
   const dispatch = useDispatch();
 
-  const questionsAmount = useSelector((state) => state.options.questionsAmount);
+  const numberOfQuestions = useSelector(
+    (state) => state.welcomeOptions.numberOfQuestions
+  );
   const questionsCategory = useSelector(
-    (state) => state.options.questionsCategory
+    (state) => state.welcomeOptions.questionsCategory
   );
   const questionsDifficulty = useSelector(
-    (state) => state.options.questionsDifficulty
+    (state) => state.welcomeOptions.questionsDifficulty
   );
-  const questionsType = useSelector((state) => state.options.questionsType);
+  const questionsType = useSelector(
+    (state) => state.welcomeOptions.questionsType
+  );
+  const currentQuestionIndex = useSelector(
+    (state) => state.gameFlow.currentQuestionIndex
+  );
 
   const handleQuery = async () => {
-    let retrieveQuestionsURL = `${RETRIEVE_QUESTIONS_BASE_URL}?amount=${questionsAmount}`;
+    let retrieveQuestionsURL = `${RETRIEVE_QUESTIONS_BASE_URL}?amount=${numberOfQuestions}`;
     if (questionsCategory.length) {
-      apiUrl = apiUrl.concat(`&category=${questionCategory}`);
+      retrieveQuestionsURL = retrieveQuestionsURL.concat(
+        `&category=${questionsCategory}`
+      );
     }
     if (questionsDifficulty.length) {
-      apiUrl = apiUrl.concat(`&difficulty=${questionDifficulty}`);
+      retrieveQuestionsURL = retrieveQuestionsURL.concat(
+        `&difficulty=${questionsDifficulty}`
+      );
     }
     if (questionsType.length) {
-      apiUrl = apiUrl.concat(`&type=${questionType}`);
+      retrieveQuestionsURL = retrieveQuestionsURL.concat(
+        `&type=${questionsType}`
+      );
     }
     changeIsLoadingAction(dispatch, true);
     await fetch(retrieveQuestionsURL)
       .then((res) => res.json())
       .then((response) => {
-        changeIsLoadingAction(dispatch, false);
-        setQuestionsAction(dispatch, response.results);
+        const responseCode = response.response_code;
+        if (responseCode === 0) {
+          setQuestionsAction(dispatch, response.results);
+          changeIsLoadingAction(dispatch, false);
+        } else if (responseCode === 1) {
+          setErrorMessage(
+            "We're sorry, but we don't have enough questions of this type - please choose different settings"
+          );
+          setTimeout(() => setErrorMessage(null), 5000);
+        } else {
+          setErrorMessage(
+            "We're sorry for the inconvinence, but an error occurred on our side - please try again later"
+          );
+          setTimeout(() => setErrorMessage(null), 5000);
+        }
       });
+
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndexAction(dispatch, 0);
+      setScoreAction(dispatch, 0);
+    }
   };
-  return <button onClick={handleQuery}>{buttonText}</button>;
+  return (
+    <div>
+      <button className="start-button" onClick={handleQuery}>
+        {buttonText}
+      </button>
+      {errorMessage && <p className="error-message">{errorMessage}</p>}
+    </div>
+  );
 }
-export default startButton;
+export default StartButton;

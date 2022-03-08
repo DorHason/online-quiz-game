@@ -7,7 +7,7 @@ export const changeCategoryAction = (dispatch, value) => {
 
 export const changeDifficultyAction = (dispatch, value) => {
   dispatch({
-    type: "CHANGE_CATEGORY",
+    type: "CHANGE_DIFFICULTY",
     value: value,
   });
 };

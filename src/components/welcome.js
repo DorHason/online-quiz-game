@@ -1,17 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import RETRIEVE_CATEGORIES_URL from "./consts";
-import { changeIsLoadingAction } from "./actions/global-actions.js";
+import { RETRIEVE_CATEGORIES_URL } from "../consts";
+import { getAmountRange } from "../helpers";
+import StartButton from "./start-button";
+import { changeIsLoadingAction } from "../actions/global-actions.js";
 import {
   changeCategoryAction,
   changeDifficultyAction,
   changeTypeAction,
   changeAmountAction,
-} from "./actions/welcome-actions.js";
+} from "../actions/welcome-actions.js";
 
 function Welcome() {
   const [questions, setQuestions] = useState(null);
-  const isLoading = useSelector((state) => state.options.isLoading);
+  const isLoading = useSelector((state) => state.welcomeOptions.isLoading);
+  const questionsCategory = useSelector(
+    (state) => state.welcomeOptions.questionsCategory
+  );
+  const questionsDifficulty = useSelector(
+    (state) => state.welcomeOptions.questionsDifficulty
+  );
+  const questionsType = useSelector(
+    (state) => state.welcomeOptions.question_type
+  );
+  const numberOfQuestions = useSelector(
+    (state) => state.welcomeOptions.numberOfQuestions
+  );
+  const amountRange = getAmountRange();
 
   const dispatch = useDispatch();
 
@@ -37,11 +52,6 @@ function Welcome() {
   const handleAmountChange = (event) => {
     changeAmountAction(dispatch, event.target.value);
   };
-  const amountRange = () => {
-    return Array(10)
-      .fill(null)
-      .map((_, i) => i + 1);
-  };
 
   if (isLoading) {
     return <p>Loading...</p>;
@@ -50,7 +60,7 @@ function Welcome() {
       <div>
         <div>
           <h2>Select Category:</h2>
-          <select value={questionCategory} onChange={handleCategoryChange}>
+          <select value={questionsCategory} onChange={handleCategoryChange}>
             <option>All</option>
             {questions &&
               questions.map((question) => (
@@ -63,7 +73,7 @@ function Welcome() {
 
         <div>
           <h2>Select Difficulty:</h2>
-          <select value={questionDifficulty} onChange={handleDifficultyChange}>
+          <select value={questionsDifficulty} onChange={handleDifficultyChange}>
             <option value="" key="difficulty-0">
               All
             </option>
@@ -81,7 +91,7 @@ function Welcome() {
 
         <div>
           <h2>Select Question Type:</h2>
-          <select value={questionType} onChange={handleTypeChange}>
+          <select value={questionsType} onChange={handleTypeChange}>
             <option value="" key="type-0">
               All
             </option>
@@ -104,6 +114,8 @@ function Welcome() {
             ))}
           </select>
         </div>
+
+        <StartButton buttonText="Get started!" />
       </div>
     );
   }
