@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setScoreAction, setQuestionsAction } from "../actions/global-actions";
 import { setNewBestScoreAction } from "../actions/game-over-actions";
+import Confetti from "./confetti";
 import StartButton from "./start-button";
 
 function GameOver() {
@@ -22,7 +23,12 @@ function GameOver() {
 
   return (
     <div>
-      {isNewBestScore && <h1>New Best Score!</h1>}
+      {isNewBestScore && (
+        <div>
+          <h1>New Best Score!</h1>
+          <Confetti />
+        </div>
+      )}
       <h2>Final Score: {score}</h2>
       <h3>Your Best Score: {bestScore}</h3>
       <StartButton buttonText="New game" />
