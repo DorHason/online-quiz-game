@@ -84,7 +84,14 @@ function Question() {
       setEarnedScore("Time out!");
       clearEarnedScoreAsync();
     }
-  }, [timer]);
+  }, [
+    timer,
+    currentQuestionIndex,
+    questions.length,
+    moveToNextQuestion,
+    setEarnedScore,
+    clearEarnedScoreAsync,
+  ]);
 
   const handleListItemClick = (event) => {
     if (event.target.textContent === correctAnswer) {
