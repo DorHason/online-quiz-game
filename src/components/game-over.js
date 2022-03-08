@@ -18,7 +18,7 @@ function GameOver() {
       setNewBestScoreAction(dispatch, score);
       setIsNewBestScore(true);
     }
-  });
+  }, [score, bestScore, dispatch]);
 
   return (
     <div>
