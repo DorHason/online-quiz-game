@@ -1,3 +1,5 @@
+import { SCORE_MULTIPLIERS } from "./consts";
+
 export const getAmountRange = () => {
   return Array(10)
     .fill(null)
@@ -28,13 +30,13 @@ export const decodeHTML = (html) => {
 };
 
 export const calculateScore = (currentScore, timeLeft, questionDifficulty) => {
-  let multiplier = 1;
-  if (questionDifficulty === "medium") {
-    multiplier = 1.5;
-  } else if (questionDifficulty === "hard") {
-    multiplier = 2;
+  if (!Object.keys(SCORE_MULTIPLIERS).includes(questionDifficulty)) {
+    // I would add a log here - but this is for now
+    return 0;
   }
-  return Math.round(currentScore + timeLeft * multiplier);
+  return Math.round(
+    currentScore + timeLeft * SCORE_MULTIPLIERS[questionDifficulty]
+  );
 };
 
 export const capitalizeFirstLetter = (string) => {
