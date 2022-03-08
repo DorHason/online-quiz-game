@@ -72,6 +72,7 @@ function Question() {
 
   const clearEarnedScoreAsync = useCallback(() => {
     if (timeoutId) {
+      // we need to clear timeout when previous timeouts are still "alive" to ensure each earned score message get the full 3000ms
       clearTimeout(timeoutId);
     }
     const currentTimeoutId = setTimeout(() => setEarnedScore(null), 3000);
